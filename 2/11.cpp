@@ -272,9 +272,9 @@ void DrawSineWave(int moveX, int moveY, float Xsize, float Ysize, bool Manim, bo
 		Ysize = -100;
 
 	glColor3f(1.0f, 0.5f, 1.0f);
-	glBegin(GL_POINTS);
+	glBegin(GL_LINE_STRIP);
 
-	for (float theta = 0.0f; theta <= 2100.0f; theta += 1.0f)
+	for (float theta = 0.0f; theta <= 2100.0f; theta++)
 	{
 		glVertex3d(200 + x + moveX - Xsize, 500 + (50 + Ysize/10) * sin(ConvertToRadian(theta)) + moveY, 0.0f);
 
@@ -296,7 +296,7 @@ void DrawSpring(int moveX, int moveY, float Xsize, float Ysize, bool Manim, bool
 	glColor3f(1.0f, 1.0f, 0.5f);
 	glBegin(GL_LINE_STRIP);
 
-	for (float theta = -100.0f; theta <= 2100.0f; theta += 1.0f)
+	for (float theta = -100.0f; theta <= 2100.0f; theta++)
 	{
 		glVertex3f(40.0f * cos(ConvertToRadian(theta)) + 200 + x + moveX - Xsize, (40.0f + Ysize/10) * sin(ConvertToRadian(theta)) + 350 + moveY, 0.0f);
 
