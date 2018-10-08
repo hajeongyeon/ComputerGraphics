@@ -188,9 +188,9 @@ void Keyboard(unsigned char key, int x, int y)
 		coursetype = COURSE;
 		shapetype = NOTHING;
 		TorR = true;
-		RectX = -1.0f, RectY = 0.0f;
 		MoveX = 0.0f, MoveY = 0.0f;
 		TriX = MoveX, TriY = MoveX;
+		RectX = MoveX, RectY = MoveY;
 		click = false;
 		yRot = 0.0f;
 		break;
