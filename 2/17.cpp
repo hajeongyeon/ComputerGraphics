@@ -15,6 +15,7 @@ void Keyboard(unsigned char, int, int);
 void TimerFunction(int);
 
 void DrawSun();
+void DrawOrbit(float);
 void DrawEarth();
 void DrawJupiter();
 void DrawNeptune();
@@ -34,6 +35,10 @@ float EuropaX, EuropaZ;
 float TritonX, TritonZ;
 
 bool isPerspective;
+
+double zoom;
+float CameraX, CameraY;
+float Xrot, Yrot, Zrot;
 
 void main(int argc, char *argv[])
 {
@@ -75,6 +80,11 @@ void SetupRC()
 	TritonX = 2.5f, TritonZ = 0.0f;
 
 	isPerspective = true;
+
+	zoom = 1.0;
+
+	CameraX = 0.0f, CameraY = 0.0f;
+	Xrot = 0.0f, Yrot = 0.0f, Zrot = 0.0f;
 }
 
 // 메뉴
@@ -97,38 +107,52 @@ void MenuFunc(int button)
 // 윈도우 출력 함수
 GLvoid drawScene(GLvoid)
 {
-	printf("%d\n", isPerspective);
-
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glPushMatrix();
-	glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
+		printf("%lf\n", zoom);
 
-		if (!isPerspective)
+		if (isPerspective)
 		{
-			float halfY = 20 * sqrt(1 + (WINDOW_HEIGHT / WINDOW_WIDTH) * (WINDOW_HEIGHT / WINDOW_WIDTH)) / 2.0f * RADIAN;
-			float top = -150 * tan(halfY);
-			float right = top * tan(halfY) * WINDOW_WIDTH / WINDOW_HEIGHT;
-			glOrtho(-right, right, -top, top, -400, 400);
-			glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
-			glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
-			//glRotatef(5.0f, 1.0f, 1.0f, 0.0f);
-			//glScalef(1.9f, 1.9f, 1.9f);
+			gluPerspective(60.0f, WINDOW_WIDTH / WINDOW_HEIGHT, 1.0, 1000.0);
+			glTranslatef(0.0, 0.0, -30.0f);
+
+			if (zoom > 20.0)
+				zoom = 20.0;
+
+			glTranslatef(0.0f, 0.0f, zoom);
 		}
 		else
 		{
-			gluPerspective(60.0f, WINDOW_WIDTH / WINDOW_HEIGHT, 1.0, 1000.0);
-			glTranslatef(0.0, 0.0, -30.0);
+			if (zoom > 4.0)
+				zoom = 4.0;
+			else if (zoom <= 0.0)
+				zoom = 0.1;
+
+			float halfY = 20 * sqrt(1 + WINDOW_WIDTH / WINDOW_HEIGHT * WINDOW_WIDTH / WINDOW_HEIGHT) / 2.0f * RADIAN;
+			float top = -20 * tan(halfY);
+			float right = top * tan(halfY) * WINDOW_WIDTH / WINDOW_HEIGHT;
+			glOrtho(-right / zoom, right / zoom, -top / zoom, top / zoom, -1000, 1000);
+			glScalef(0.074f, 0.29f, 0.3f);
+			glRotatef(180.0f, 0.0f, 1.0f, 0.0f);
+			glRotatef(180.0f, 1.0f, 0.0f, 0.0f);
 		}
 	
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
+
+		glTranslatef(CameraX, CameraY, 0.0f);
+		glRotatef(Xrot, 1.0f, 0.0f, 0.0f);
+		glRotatef(Yrot, 0.0f, 1.0f, 0.0f);
+		glRotatef(Zrot, 0.0f, 0.0f, 1.0f);
 	
 		DrawSun();
 		DrawEarth();
@@ -154,6 +178,68 @@ void Keyboard(unsigned char key, int x, int y)
 			isPerspective = false;
 		else
 			isPerspective = true;
+		break;
+
+	case 'x':
+		Xrot++;
+		break;
+
+	case 'X':
+		Xrot--;
+		break;
+
+	case 'y':
+		Yrot++;
+		break;
+
+	case 'Y':
+		Yrot--;
+		break;
+
+	case 'z':
+		Zrot++;
+		break;
+
+	case 'Z':
+		Zrot--;
+		break;
+
+	case 'w': case 'W':
+		CameraX++;
+		break;
+
+	case 'a': case 'A':
+		CameraX--;
+		break;
+
+	case 's': case 'S':
+		CameraY++;
+		break;
+
+	case 'd': case 'D':
+		CameraY--;
+		break;
+
+	case '+':
+		if (isPerspective)
+			zoom += 0.5;
+		else
+			zoom += 0.1f;
+		break;
+
+	case '-':
+		if (isPerspective)
+			zoom -= 0.5f;
+		else
+			zoom -= 0.1f;
+		break;
+
+	case 'i': case 'I':
+		SetupRC();
+		break;
+
+	case 'q': case 'Q':
+		exit(0);
 		break;
 
 	default:
@@ -198,21 +284,31 @@ void DrawSun()
 	glPopMatrix();
 }
 
+void DrawOrbit(float r)
+{
+	// 행성 궤도
+	glPushMatrix();
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i < 360; i++)
+		{
+			float angle = i * RADIAN;
+			glVertex3f(r * cos(angle), 0.0f, r * sin(angle));
+		}
+		glEnd();
+	glPopMatrix();
+}
+
 void DrawEarth()
 {
 	glPushMatrix();
 		glColor3f(0.0f, 0.85f, 0.0f);
+		if (!isPerspective)
+		{
+			glTranslatef(0.0f, -0.78f, 0.0f);
+			glScalef(1.05f, 1.0f, 1.05f);
+		}
 
-		// 행성 궤도
-		glPushMatrix();
-			glBegin(GL_LINE_STRIP);
-			for (int i = 0; i < 360; i++)
-			{
-				float angle = i * RADIAN;
-				glVertex3f(10.0f * cos(angle), 0.0f, 10.0f * sin(angle));
-			}
-			glEnd();
-		glPopMatrix();
+		DrawOrbit(10.0f);
 	
 		// 행성
 		glPushMatrix();
@@ -231,17 +327,13 @@ void DrawJupiter()
 	glPushMatrix();
 		glColor3f(0.6f, 0.5f, 0.1f);
 		glRotatef(45.0f, 1.0f, 0.0f, 1.0f);
+		if (!isPerspective)
+		{
+			glTranslatef(0.0f, -2.4f, 0.0f);
+			glScalef(1.05f, 1.0f, 1.05f);
+		}
 	
-		// 궤도
-		glPushMatrix();
-			glBegin(GL_LINE_STRIP);
-			for (int i = 0; i < 360; i++)
-			{
-				float angle = i * RADIAN;
-				glVertex3f(10.0f * cos(angle), 0.0f, 10.0f * sin(angle));
-			}
-			glEnd();
-		glPopMatrix();
+		DrawOrbit(10.0f);
 	
 		// 행성
 		glPushMatrix();
@@ -260,17 +352,13 @@ void DrawNeptune()
 	glPushMatrix();
 		glColor3f(0.0f, 0.0f, 0.85f);
 		glRotatef(-45.0f, 1.0f, 0.0f, 1.0f);
+		if (!isPerspective)
+		{
+			glTranslatef(0.0f, 1.5f, 0.0f);
+			glScalef(1.05f, 1.0f, 1.1f);
+		}
 	
-		// 궤도
-		glPushMatrix();
-			glBegin(GL_LINE_STRIP);
-			for (int i = 0; i < 360; i++)
-			{
-				float angle = i * RADIAN;
-				glVertex3f(10.0f * cos(angle), 0.0f, 10.0f * sin(angle));
-			}
-			glEnd();
-		glPopMatrix();
+		DrawOrbit(10.0f);
 	
 		// 행성
 		glPushMatrix();
@@ -288,16 +376,7 @@ void DrawMoon()
 {
 	glColor3f(0.5f, 0.5f, 0.5f);
 
-	// 위성 궤도
-	glPushMatrix();
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < 360; i++)
-		{
-			float angle = i * RADIAN;
-			glVertex3f(2.5f * cos(angle), 0.0f, 2.5f * sin(angle));
-		}
-		glEnd();
-	glPopMatrix();
+	DrawOrbit(2.5f);
 	
 	// 위성
 	glPushMatrix();
@@ -313,16 +392,7 @@ void DrawEuropa()
 {
 	glColor3f(0.0f, 0.5f, 0.35f);
 
-	// 위성 궤도
-	glPushMatrix();
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < 360; i++)
-		{
-			float angle = i * RADIAN;
-			glVertex3f(2.5f * cos(angle), 0.0f, 2.5f * sin(angle));
-		}
-		glEnd();
-	glPopMatrix();
+	DrawOrbit(2.5f);
 
 	// 위성
 	glPushMatrix();
@@ -338,16 +408,7 @@ void DrawTriton()
 {
 	glColor3f(1.0f, 1.5f, 0.5f);
 
-	// 위성 궤도
-	glPushMatrix();
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < 360; i++)
-		{
-			float angle = i * RADIAN;
-			glVertex3f(2.5f * cos(angle), 0.0f, 2.5f * sin(angle));
-		}
-		glEnd();
-	glPopMatrix();
+	DrawOrbit(2.5f);
 
 	// 위성
 	glPushMatrix();
