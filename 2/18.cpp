@@ -7,11 +7,7 @@
 //	  카메라는 항상 중앙을 바라보고 있다.
 
 #include <GL/freeglut.h>
-#include <time.h>
-#include <math.h>
 #include <iostream>
-#include <vector>
-#include <iterator>
 #include "1618.h"
 using namespace std;
 
@@ -78,8 +74,11 @@ GLvoid drawScene(GLvoid)
 
 	glEnd();
 
-	//glRotatef(CameraRot, 0.0f, 1.0f, 0.0f);
-	gluLookAt(0.0f, 0.0, zoom, CameraRot, 0.0, -1.0, 0.0, 1.0, 0.0);
+	if (CameraRot > 20.0f)
+		CameraRot = 20.0f;
+
+	glTranslatef(0.0f, 0.0f, CameraRot);
+	gluLookAt(0.0, 0.0, zoom, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 
 	// Plane
 	glPushMatrix();
