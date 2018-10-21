@@ -30,7 +30,20 @@ void BottomBody();
 void MiddleBody();
 void TopBody();
 
-float BMoveX, BRoty;
+float BMoveX, BMoveZ, BRoty;
 float MRotx, MRoty;
 float TRotx, TRotz;
 int dir;
+
+
+// 21
+void DrawTree();
+void DrawRunningMachine();
+void DrawPullUpBar();
+void DrawBenchPress();
+void Collide();
+
+int SphereDir, LeafDir, LeftLegDir, RightLegDir, SwingDir, PushDir;
+double LeafRadius;
+
+float Conveyor, LeftLeg, RightLeg, Swing, Push;
