@@ -1,6 +1,12 @@
 #pragma once
 
 #define PI 3.141592
+#define RADIAN 0.0174532
+
+typedef struct {
+	float MoveX, MoveZ;
+	float SphereSize;
+} Shape;
 
 //
 void SetupRC();
@@ -47,3 +53,16 @@ int SphereDir, LeafDir, LeftLegDir, RightLegDir, SwingDir, PushDir;
 double LeafRadius;
 
 float Conveyor, LeftLeg, RightLeg, Swing, Push;
+
+
+// 22
+void DrawAirplane();
+
+GLUquadricObj *quadratic;
+int propeller;
+float airplaneX, airplaneZ;
+int airplanedegree;
+
+int checktime;
+
+int airplaneRot;
