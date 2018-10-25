@@ -47,7 +47,12 @@ void DrawTree();
 void DrawRunningMachine();
 void DrawPullUpBar();
 void DrawBenchPress();
+
 void Collide();
+void TreeCollide();
+void RunningCollide();
+void BenchCollide();
+void PullCollide();
 
 int SphereDir, LeafDir, LeftLegDir, RightLegDir, SwingDir, PushDir;
 double LeafRadius;

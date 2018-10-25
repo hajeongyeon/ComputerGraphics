@@ -269,6 +269,26 @@ void Keyboard(unsigned char key, int x, int y)
 		TRotz -= 1;
 		break;
 
+	case 'w': case 'W':
+		SphereDir = 1;
+		//dir = 3;
+		break;
+
+	case 'a': case 'A':
+		SphereDir = 3;
+		//dir = 1;
+		break;
+
+	case 's': case 'S':
+		SphereDir = 0;
+		//dir = 2;
+		break;
+
+	case 'd': case 'D':
+		SphereDir = 2;
+		//dir = 0;
+		break;
+
 	default:
 		break;
 	}
@@ -327,6 +347,10 @@ void TimerFunction(int value)
 	if (Push >= 4.0f || Push <= 2.0f) PushDir *= -1;
 
 	Collide();
+	TreeCollide();
+	RunningCollide();
+	BenchCollide();
+	PullCollide();
 
 	glutPostRedisplay();
 	glutTimerFunc(100, TimerFunction, 1);
@@ -631,19 +655,47 @@ void DrawBenchPress()
 
 void Collide()
 {
-	if ((MoveX - radius < BMoveZ + 2.5f) && (MoveZ - radius < BMoveX + 2.5f) && SphereDir == 1)
+	if ((MoveX - radius < BMoveZ + 2.5f) && (MoveZ - radius < BMoveX + 2.5f))
 	{
-		SphereDir = 2;
-		dir = 3;
-		printf("col 2\n");
+		if(rand() % 2 == 0) SphereDir = 0;
+		else SphereDir = 2;
 
+		dir = rand() % 4;
 	}
+}
 
-	if ((MoveZ - radius < BMoveX + 2.5f) && (MoveX - radius < BMoveZ + 2.5f) && SphereDir == 3)
-	{
-		SphereDir = 0;
-		dir = 1;
+void TreeCollide()
+{
+	if (SphereDir == 2 && MoveZ > 10.0 && MoveX > 12.0) SphereDir = 3;
+	else if (SphereDir == 0 && MoveZ > 10.0 && MoveX > 10.0) SphereDir = 1;
 
-		printf("col 4\n");
-	}
+	if (dir == 0 && BMoveX > 9.0 && BMoveZ > 9.0) dir = 1;
+	else if (dir == 2 && BMoveX > 9.0 && BMoveZ > 9.5) dir = 3;
+}
+
+void RunningCollide()
+{
+	if (SphereDir == 3 && MoveZ < -5.0 && MoveX > 12.0) SphereDir = 2;
+	else if (SphereDir == 0 && MoveZ < -5.0 && MoveX > 8.0) SphereDir = 1;
+
+	if (dir == 1 && BMoveX < -5.0 && BMoveZ > 8.0) dir = 0;
+	else if (dir == 2 && BMoveX < -5.0 && BMoveZ > 8.0) dir = 3;
+}
+
+void BenchCollide()
+{
+	if (SphereDir == 2 && MoveZ > 6.0 && MoveX < -10.0) SphereDir = 3;
+	else if (SphereDir == 1 && MoveZ > 10.0 && MoveX < -8.0) SphereDir = 0;
+
+	if (dir == 0 && BMoveX > 5.0 && BMoveZ < -6.0) dir = 1;
+	else if (dir == 3 && BMoveX > 5.0 && BMoveZ < -6.0) dir = 2;
+}
+
+void PullCollide()
+{
+	if (SphereDir == 3 && MoveZ < -10.0 && MoveX < -7.0) SphereDir = 2;
+	else if (SphereDir == 1 && MoveZ < -10.0 && MoveX < -7.0) SphereDir = 0;
+
+	if (dir == 1 && BMoveX < -10.0 && BMoveZ < -6.0) dir = 0;
+	else if (dir == 3 && BMoveX < -10.0 && BMoveZ < -6.0) dir = 2;
 }

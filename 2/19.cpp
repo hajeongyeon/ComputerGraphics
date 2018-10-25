@@ -177,7 +177,11 @@ void XRoll()
 
 void YRoll()
 {
+	glTranslatef(0.0f, 0.0f, MoveX);
+	glTranslatef(MoveZ, 0.0f, 0.0f);
 	glRotatef(sRoty, 0.0f, 1.0f, 0.0f);
+	glTranslatef(-MoveZ, 0.0f, 0.0f);
+	glTranslatef(0.0f, 0.0f, -MoveX);
 }
 
 void ZRoll()
