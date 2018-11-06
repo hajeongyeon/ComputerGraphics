@@ -27,8 +27,9 @@ void DrawSmallCube();
 
 //
 int yRot;
-float zRot, MoveX;
+float zRot, MoveX, MoveY;
 float zoom;
+bool isLeft, isRight;
 
 vector<Ball> ball;
 vector<Ball>::iterator iter;
@@ -57,8 +58,9 @@ void main(int argc, char *argv[])
 // 초기화 함수
 void SetupRC()
 {
-	yRot = 0, zRot = 0.0f, MoveX = 9.9f;
+	yRot = 0, zRot = 0.0f, MoveX = 9.9f, MoveY = -9.9f;
 	zoom = 0.0f;
+	isLeft = false, isRight = false;
 }
 
 // 윈도우 출력 함수
@@ -74,11 +76,12 @@ GLvoid drawScene(GLvoid)
 	glTranslatef(0.0f, 0.0f, 12.0f);
 	glTranslatef(0.0f, 0.0f, zoom);
 
-	glRotatef(zRot, 0.0f, 0.0f, 1.0f);
-
-	DrawBigCube();
-	DrawBall();
-	DrawSmallCube();
+	glPushMatrix();
+		glRotatef(zRot, 0.0f, 0.0f, 1.0f);
+		DrawBigCube();
+		DrawBall();
+		DrawSmallCube();
+	glPopMatrix();
 
 	glutSwapBuffers();
 }
@@ -135,20 +138,53 @@ void Mouse(int x, int y)
 {
 	if (x < 200)
 	{
-		zRot += 0.1f;
-		if(MoveX > -9.9f && zRot > 0.0f)
-			MoveX -= 0.05f;
+		isLeft = true;
+		isRight = false;
 	}
 	else if (x > 600)
 	{
-		zRot -= 0.1f;
-		if (MoveX < 9.9f && zRot < 0.0f)
-			MoveX += 0.05f;
+		isLeft = false;
+		isRight = true;
+	}
+	else
+	{
+		isLeft = false;
+		isRight = false;
 	}
 }
 
 void TimerFunction(int value)
 {
+	printf("%f %f %f\n", MoveX, MoveY, zRot);
+	if (isLeft)
+	{
+		zRot += 1.0f;
+		if (MoveX > -9.5f && MoveY < -9.8f && zRot > 0.0f && zRot < 100.0f)
+			MoveX -= 0.5f;
+		else if (MoveY < 9.8f && zRot < 140.0f && zRot > 100.0f)
+			MoveY += 0.5f;
+		else if (MoveY > 9.5f && MoveX < 9.5f && zRot < 240.0f && zRot > 190.0f)
+			MoveX += 0.5f;
+		else if (MoveY > -9.5f && zRot < -50.0f && zRot > -100.0f)
+			MoveY -= 0.5f;
+		else if (MoveY > 9.5f && MoveX < 9.5f && zRot > -240.0f)
+			MoveX += 0.5f;
+	}
+	else if (isRight)
+	{
+		zRot -= 1.0f;
+		if (MoveX < 9.5f && zRot < 0.0f && zRot > -100.0f)
+			MoveX += 0.5f;
+		else if (MoveY > -9.5f && zRot > 50.0f && zRot < 100.0f)
+			MoveY -= 0.5f;
+		else if (MoveY > 9.5f && MoveX > -9.5f && zRot > 100.0f && zRot < 200.0f)
+			MoveX -= 0.5f;
+		else if (MoveY < 9.5f && zRot < -100.0f)
+			MoveY += 0.5f;
+		else if (MoveY > 9.5f && zRot < -200.0f && zRot > -240.0f)
+			MoveX -= 0.5f;
+	}
+
 	for (iter = ball.begin(); iter != ball.end(); ++iter)
 	{
 		iter->x += iter->dirX;
@@ -289,21 +325,21 @@ void DrawSmallCube()
 		glPushMatrix();
 			glTranslatef(0.0f, 0.0f, -20.0f);
 			glTranslatef(MoveX, 0.0f, 0.0f);
-			glTranslatef(0.0f, -9.9f, 0.0f);
+			glTranslatef(0.0f, MoveY, 0.0f);
 			glColor3f(1.0f, 0.0f, 0.0f);
 			glutSolidCube(4.0f);
 		glPopMatrix();
 		glPushMatrix();
 			glTranslatef(0.0f, 0.0f, -15.0f);
 			glTranslatef(MoveX, 0.0f, 0.0f);
-			glTranslatef(0.0f, -9.9f, 0.0f);
+			glTranslatef(0.0f, MoveY, 0.0f);
 			glColor3f(1.0f, 0.0f, 0.0f);
 			glutSolidCube(4.0f);
 		glPopMatrix();
 		glPushMatrix();
 			glTranslatef(0.0f, 0.0f, -10.0f);
 			glTranslatef(MoveX, 0.0f, 0.0f);
-			glTranslatef(0.0f, -9.9f, 0.0f);
+			glTranslatef(0.0f, MoveY, 0.0f);
 			glColor3f(1.0f, 0.0f, 0.0f);
 			glutSolidCube(4.0f);
 		glPopMatrix();
