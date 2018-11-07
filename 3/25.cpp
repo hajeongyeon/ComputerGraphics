@@ -327,14 +327,14 @@ void DrawCube()
 		glPopMatrix();
 		// ¾Æ·¡
 		glBegin(GL_QUADS);
-		glColor3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(-3.0f, -3.0f, -6.0f);
 		glColor3f(0.0f, 1.0f, 0.0f);
 		glVertex3f(-3.0f, -3.0f, 0.0f);
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glVertex3f(3.0f, -3.0f, 0.0f);
+		glColor3f(0.0f, 0.0f, 0.0f);
+		glVertex3f(-3.0f, -3.0f, -6.0f);
 		glColor3f(0.0f, 1.0f, 1.0f);
 		glVertex3f(3.0f, -3.0f, -6.0f);
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glVertex3f(3.0f, -3.0f, 0.0f);
 		glEnd();
 	glPopMatrix();
 }
