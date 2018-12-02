@@ -55,8 +55,12 @@ void SetupRC()
 	for (int i = 0; i < 7; ++i)
 	{
 		ctrlpoints[i][0] = -1000;
-		ctrlpoints[i][1] = rand() % 100 - 50;
+		ctrlpoints[i][1] = -1000;
 		ctrlpoints[i][2] = -1000;
+	}
+	for (int i = 0; i < 6; ++i)
+	{
+		tmp[i] = rand() % 100 + 50;
 	}
 
 	for (int i = 0; i < 2; ++i)
@@ -331,6 +335,7 @@ void Mouse(int button, int state, int x, int y)
 					for (int i = num; i < 7; i++)
 					{
 						ctrlpoints[i][0] = x - 400;
+						ctrlpoints[i][1] = tmp[num];
 						ctrlpoints[i][2] = y - 300;
 
 						if (num > 5)
@@ -497,8 +502,8 @@ void DrawPillar(float x, float y, float z)
 {
 	glPushMatrix();
 		glTranslatef(x, y, z);
-		glTranslatef(0.0f, -100.0f, 0.0f);
-		glScalef(1.0f, 20.0f, 1.0f);
+		glTranslatef(0.0f, -150.0f, 0.0f);
+		glScalef(1.0f, 30.0f, 1.0f);
 		glColor3f(0.5f, 0.5f, 0.0f);
 		glutSolidCube(10.0f);
 		glColor3f(0.0f, 0.0f, 0.0f);

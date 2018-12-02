@@ -46,7 +46,6 @@ typedef struct {
 // 기본 변수들
 GLfloat xTrs, yTrs, xRot, yRot, zoom;
 bool right_button;
-int cameraDir = 1;					// 1 3인칭, 2 로봇, 3 롤러코스터
 
 // bool
 bool isOrtho, isEdit;					// 직교인지 원근인지 / 롤러코스터 편집 중인지
@@ -57,6 +56,7 @@ bool isFire, BTcollision, BPcollision;	// 총알 발사, 총알 충돌체크
 OBJECT obj[10];
 int num;
 GLfloat ctrlpoints[7][3];			// 롤러코스터 제어점
+GLfloat tmp[7];
 
 // 로봇 관련 변수들
 ROBOT robot[2];
