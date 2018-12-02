@@ -46,11 +46,12 @@ typedef struct {
 // 기본 변수들
 GLfloat xTrs, yTrs, xRot, yRot, zoom;
 bool right_button;
+int cameraDir = 1;					// 1 3인칭, 2 로봇, 3 롤러코스터
 
 // bool
-bool isOrtho, isEdit;				// 직교인지 원근인지 / 롤러코스터 편집 중인지
-bool isCP;							// 제어점 위치가 장애물 위치랑 같은지
-bool isFire;						// 총알 발사
+bool isOrtho, isEdit;					// 직교인지 원근인지 / 롤러코스터 편집 중인지
+bool isCP;								// 제어점 위치가 장애물 위치랑 같은지
+bool isFire, BTcollision, BPcollision;	// 총알 발사, 총알 충돌체크
 
 // 롤러코스터 변수들
 OBJECT obj[10];
@@ -80,6 +81,7 @@ void Mouse(int, int, int, int);
 void Motion(int, int);
 void TimerFunction(int);
 
+void DrawPillar(float, float, float);
 void DrawTree();
 void DrawRobot();
 void DrawBullet();
@@ -88,3 +90,4 @@ void DrawCape();
 void DrawWeather();
 
 void ROCollide();		// 로봇과 오브젝트의 충돌
+void BOCollide();		// 총알과 오브젝트의 충돌

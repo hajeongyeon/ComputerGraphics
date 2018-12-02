@@ -1,5 +1,22 @@
 #include "HW2.h"
 
+// ** 마우스 / 키보드 명령어
+//	- 마우스 명령어
+//		· 왼쪽 클릭 : 롤러코스터 코스 만들기(7번째 클릭에서 곡선이 이어집니다.)
+//		· 오른쪽 클릭 : 제어점 위치 변경(첫번째 점과 마지막 점은 변경 불가)
+//	- 키보드 명령어
+//		· - 키 : XZ 평면, XY 평면 전환
+//		· Enter 키 : 편집 완료
+//		· 숫자 키 1, 2, 3 : 맑은 날씨, 눈 오는 날씨, 비 오는 날씨
+//		· w / a / s / d 키 : 로봇 방향 변경
+//		· Space Bar 키 : 총알 발사
+//		· x, y 키 : x, y축으로 회전(대문자는 반대방향)
+//		· [, { 키: x축으로 이동
+//		· ], } 키: y축으로 이동
+//		· z 키 : 줌 인 / 아웃
+//		· r 키 : 초기화
+//		· q 키 : 종료
+
 void main(int argc, char *argv[])
 {
 	//초기화 함수들
@@ -26,7 +43,7 @@ void SetupRC()
 
 	isOrtho = true, isEdit = true;
 	isCP = false;
-	isFire = false;
+	isFire = false, BTcollision = false, BPcollision = false;
 
 	for (int i = 0; i < 10; ++i)
 	{
@@ -84,20 +101,20 @@ GLvoid drawScene(GLvoid)
 	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
 
 	glPushMatrix();
-	glTranslatef(0.0f, -100.0f, 0.0f);
+		glTranslatef(0.0f, -100.0f, 0.0f);
 
-	// 바닥
-	glPushMatrix();
-	glScalef(1.0f, 0.01f, 1.0f);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glutSolidCube(500.0f);
-	glPopMatrix();
+		// 바닥
+		glPushMatrix();
+			glScalef(1.0f, 0.01f, 1.0f);
+			glColor3f(0.5f, 0.5f, 0.5f);
+			glutSolidCube(500.0f);
+		glPopMatrix();
 
-	DrawTree();
-	if (!isEdit)
-	{
-		DrawRobot();
-	}
+		DrawTree();
+		if (!isEdit)
+		{
+			DrawRobot();
+		}
 	glPopMatrix();
 
 	if (num > 1)
@@ -114,7 +131,6 @@ GLvoid drawScene(GLvoid)
 			glDisable(GL_MAP1_VERTEX_3);
 		}
 	}
-
 	if (isEdit)
 	{
 		glPointSize(5.0);
@@ -128,9 +144,14 @@ GLvoid drawScene(GLvoid)
 	}
 	else
 	{
+		for (int i = 0; i < 2; ++i)
+		{
+			DrawPillar(ctrlpoints[i * 3][0], ctrlpoints[i * 3][1], ctrlpoints[i * 3][2]);
+		}
 		DrawCape();
 		DrawBullet();
 		ROCollide();
+		BOCollide();
 		DrawWeather();
 	}
 
@@ -309,7 +330,6 @@ void Mouse(int button, int state, int x, int y)
 				{
 					for (int i = num; i < 7; i++)
 					{
-
 						ctrlpoints[i][0] = x - 400;
 						ctrlpoints[i][2] = y - 300;
 
@@ -353,13 +373,14 @@ void Motion(int x, int y)
 						{
 							ctrlpoints[i][0] = x - 400;
 							ctrlpoints[i][2] = y - 300;
+
 						}
 					}
 				}
 			}
 			else
 			{
-				if (x - 400 < 250 && x - 400 > -250 && y - 300 < 100)
+				if (x - 400 < 250 && x - 400 > -250 && y - 300 < 100 && y - 300 > -80)
 				{
 					for (int i = 1; i < num - 1; ++i)
 					{
@@ -471,6 +492,19 @@ void TimerFunction(int value)
 
 
 ////////////////////////////////////////////////////////
+
+void DrawPillar(float x, float y, float z)
+{
+	glPushMatrix();
+		glTranslatef(x, y, z);
+		glTranslatef(0.0f, -100.0f, 0.0f);
+		glScalef(1.0f, 20.0f, 1.0f);
+		glColor3f(0.5f, 0.5f, 0.0f);
+		glutSolidCube(10.0f);
+		glColor3f(0.0f, 0.0f, 0.0f);
+		glutWireCube(10.0f);
+	glPopMatrix();
+}
 
 void DrawTree()
 {
@@ -899,5 +933,36 @@ void ROCollide()
 					robot[i].RobotDir = 2;
 			}
 		}
+	}
+}
+
+void BOCollide()
+{
+	for (iter = bullet.begin(); iter != bullet.end();)
+	{
+		for (int i = 0; i < 10; ++i)
+		{
+			if (iter->z >= obj[i].z - 6.0f && iter->z <= obj[i].z + 6.0f && iter->x >= obj[i].x - 6.0f && iter->x <= obj[i].x + 6.0f)
+				BTcollision = true;
+		}
+
+		if (BTcollision) iter = bullet.erase(iter);
+		else iter++;
+
+		BTcollision = false;
+	}
+
+	for (iter = bullet.begin(); iter != bullet.end();)
+	{
+		for (int i = 0; i < 2; ++i)
+		{
+			if (iter->z >= ctrlpoints[i * 3][2] - 6.0f && iter->z <= ctrlpoints[i * 3][2] + 6.0f && iter->x >= ctrlpoints[i * 3][0] - 6.0f && iter->x <= ctrlpoints[i * 3][0] + 6.0f)
+				BPcollision = true;
+		}
+
+		if (BPcollision) iter = bullet.erase(iter);
+		else iter++;
+
+		BPcollision = false;
 	}
 }
