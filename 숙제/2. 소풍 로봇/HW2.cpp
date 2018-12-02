@@ -20,7 +20,9 @@ void main(int argc, char *argv[])
 
 void SetupRC()
 {
-	xRot = 0.0f, yRot = 0.0f;
+	srand((unsigned int)time(NULL));
+
+	xRot = 0.0f, yRot = 0.0f, zoom = 45.0f;
 
 	isOrtho = true, isEdit = true;
 
@@ -31,19 +33,19 @@ void SetupRC()
 		obj[i].z = rand() % 400 - 200;
 	}
 	num = 0;
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 9; ++i)
 	{
 		ctrlpoints[i][0] = -1000;
-		ctrlpoints[i][1] = -1000;
+		ctrlpoints[i][1] = rand() % 100 - 50;
 		ctrlpoints[i][2] = -1000;
 	}
 
 	WeatherType = 1;
 	for (int i = 0; i < 100; ++i)
 	{
-		weather[i].x = rand() % 30 - 15;
-		weather[i].y = rand() % 20 + 10;
-		weather[i].z = rand() % 30 - 15;
+		weather[i].x = rand() % 400 - 200;
+		weather[i].y = rand() % 200 + 100;
+		weather[i].z = rand() % 400 - 200;
 	}
 }
 
@@ -55,42 +57,29 @@ GLvoid drawScene(GLvoid)
 
 	glLoadIdentity();
 
+	gluLookAt(0.0, 0.0, zoom, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
+
 	if (isOrtho)
 	{
 		glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-	}
-	else
-	{
-		glRotatef(90.0f, 0.0f, 1.0f, 0.0f);
 	}
 
 	glRotatef(-xRot, 1.0f, 0.0f, 0.0f);
 	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
 
 	glPushMatrix();
-	glTranslatef(0.0f, -100.0f, 0.0f);
-
-	// 바닥
-	glPushMatrix();
-		glScalef(1.0f, 0.01f, 1.0f);
-		glColor3f(0.0f, 1.0f, 0.0f);
-		glutSolidCube(500.0f);
-	glPopMatrix();
-
-	// 장애물
-	for (int i = 0; i < 10; ++i)
-	{
+		glTranslatef(0.0f, -100.0f, 0.0f);
+	
+		// 바닥
 		glPushMatrix();
-			glTranslatef(obj[i].x, obj[i].y + 10.0f, obj[i].z);
-			glScalef(1.0f, 3.0f, 1.0f);
-			glColor3f(0.43f, 0.0f, 0.0f);
-			glutSolidCube(10.0f);
+			glScalef(1.0f, 0.01f, 1.0f);
+			glColor3f(0.5f, 0.5f, 0.5f);
+			glutSolidCube(500.0f);
 		glPopMatrix();
-	}
+	
+		DrawTree();
 	glPopMatrix();
 
-	// 곡선 제어점 설정: 매개변수 u의 최소값은 0, 최대값은 1,
-	// 제어점간의 데이터 개수는 3, 제어점은 4개를 사용
 	if (num > 1)
 	{
 		for (int i = 0; i < num; i += 3)
@@ -100,20 +89,21 @@ GLvoid drawScene(GLvoid)
 			glColor3f(1.0f, 1.0f, 0.0f);
 			glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, n, &ctrlpoints[i][0]);
 			glEnable(GL_MAP1_VERTEX_3);
-			// 제어점 사이의 곡선위의 점들을 계산한다. 제어점 사이를 10개로 나누어 그 점들을 연결한다. -> 곡선위의 점 계산
-			glMapGrid1f(10.0, 0.0, 1.0); // 매개변수 0~1 사이를 10개로 나눔
-			glEvalMesh1(GL_LINE, 0, 10); // 선분으로 나눈 부분 0~10까지 선으로 그림
+			glMapGrid1f(10.0, 0.0, 1.0);
+			glEvalMesh1(GL_LINE, 0, 10);
 			glDisable(GL_MAP1_VERTEX_3);
 		}
 	}
 
-	// 제어점에 점을 그린다.
-	glPointSize(5.0);
-	glColor3f(0.0f, 0.0f, 1.0f);
-	glBegin(GL_POINTS);
-	for (int i = 0; i < num; i++)
-		glVertex3fv(&ctrlpoints[i][0]);
-	glEnd();
+	if (isEdit)
+	{
+		glPointSize(5.0);
+		glColor3f(0.0f, 0.0f, 1.0f);
+		glBegin(GL_POINTS);
+		for (int i = 0; i < num; i++)
+			glVertex3fv(&ctrlpoints[i][0]);
+		glEnd();
+	}
 
 	DrawWeather();
 
@@ -147,26 +137,39 @@ void Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case '1':
-		WeatherType = 1;
+		if (!isEdit) WeatherType = 1;
 		break;
 
 	case '2':
-		WeatherType = 2;
+		if (!isEdit) WeatherType = 2;
 		break;
 
 	case '3':
-		WeatherType = 3;
+		if (!isEdit) WeatherType = 3;
 		break;
 
 	case '-':
-		if (isOrtho) isOrtho = false;
-		else isOrtho = true;
+		if (isEdit)
+		{
+			if (isOrtho) isOrtho = false;
+			else isOrtho = true;
+		}
 		break;
 
 	case 'z':
+		if (!isEdit)
+		{
+			zoom += 10;
+			Reshape(800, 600);
+		}
 		break;
 		
 	case 'Z':
+		if (!isEdit)
+		{
+			zoom -= 10;
+			Reshape(800, 600);
+		}
 		break;
 
 	case 'x':
@@ -183,6 +186,15 @@ void Keyboard(unsigned char key, int x, int y)
 
 	case 'Y':
 		yRot--;
+		break;
+
+	case 13:				// 엔터 키
+		if (num > 8)
+		{
+			isEdit = false;
+			isOrtho = false;
+			Reshape(800, 600);
+		}
 		break;
 
 	case 'w': case 'W':
@@ -216,32 +228,33 @@ void Mouse(int button, int state, int x, int y)
 {
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		if (x - 400 < 250 && x - 400 > -250 && y - 300 < 250 && y - 300 > -250)
+		if (isOrtho && num < 9)
 		{
-			for (int j = 0; j < 10; ++j)
+			if (x - 400 < 250 && x - 400 > -250 && y - 300 < 250 && y - 300 > -250)
 			{
-				if (obj[j].x - 5 < x - 400 && obj[j].x + 5 > x - 400 && obj[j].z - 5 < y - 300 && obj[j].z + 5 > y - 300)
-					isCP = true;
-			}
-
-			if (!isCP)
-			{
-				for (int i = num; i < 10; ++i)
+				for (int j = 0; j < 10; ++j)
 				{
-					ctrlpoints[i][0] = x - 400;
-					ctrlpoints[i][1] = 0;
-					ctrlpoints[i][2] = y - 300;
-
-					if (num > 7)
-					{
-						ctrlpoints[i][0] = ctrlpoints[0][0];
-						ctrlpoints[i][1] = 0;
-						ctrlpoints[i][2] = ctrlpoints[0][2];
-					}
+					if (obj[j].x - 5 < x - 400 && obj[j].x + 5 > x - 400 && obj[j].z - 5 < y - 300 && obj[j].z + 5 > y - 300)
+						isCP = true;
 				}
 
-				++num;
-				if (num > 9) num = 0;						// edit 종료
+				if (!isCP)
+				{
+					for (int i = num; i < 10; ++i)
+					{
+						ctrlpoints[i][0] = x - 400;
+						ctrlpoints[i][2] = y - 300;
+
+						if (num > 7)
+						{
+							ctrlpoints[i][0] = ctrlpoints[0][0];
+							ctrlpoints[i][1] = ctrlpoints[0][1];
+							ctrlpoints[i][2] = ctrlpoints[0][2];
+						}
+					}
+
+					++num;
+				}
 			}
 		}
 	}
@@ -257,15 +270,35 @@ void Motion(int x, int y)
 {
 	if (right_button)
 	{
-		if (x - 400 < 250 && x - 400 > -250 && y - 300 < 250 && y - 300 > -250)
+		if (isEdit)
 		{
-			for (int i = 1; i < num - 1; ++i)
+			if (isOrtho)
 			{
-				if (ctrlpoints[i][0] > (x - 400) - 5 && ctrlpoints[i][0] < (x - 400) + 5
-					&& ctrlpoints[i][2] > (y - 300) - 5 && ctrlpoints[i][2] < (y - 300) + 5)
+				if (x - 400 < 250 && x - 400 > -250 && y - 300 < 250 && y - 300 > -250)
 				{
-					ctrlpoints[i][0] = x - 400;
-					ctrlpoints[i][2] = y - 300;
+					for (int i = 1; i < num - 1; ++i)
+					{
+						if (ctrlpoints[i][0] > (x - 400) - 5 && ctrlpoints[i][0] < (x - 400) + 5
+							&& ctrlpoints[i][2] > (y - 300) - 5 && ctrlpoints[i][2] < (y - 300) + 5)
+						{
+							ctrlpoints[i][0] = x - 400;
+							ctrlpoints[i][2] = y - 300;
+						}
+					}
+				}
+			}
+			else
+			{
+				if (x - 400 < 250 && x - 400 > -250 && y - 300 < 100)
+				{
+					for (int i = 1; i < num - 1; ++i)
+					{
+						if (ctrlpoints[i][0] > (x - 400) - 5 && ctrlpoints[i][0] < (x - 400) + 5
+							&& -ctrlpoints[i][1] > (y - 300) - 5 && -ctrlpoints[i][1] < (y - 300) + 5)
+						{
+							ctrlpoints[i][1] = -(y - 300);
+						}
+					}
 				}
 			}
 		}
@@ -278,13 +311,13 @@ void TimerFunction(int value)
 	{
 		for (int i = 0; i < 100; ++i)
 		{
-			weather[i].y -= 0.5f;
+			weather[i].y -= 3.0f;
 
-			if (weather[i].y < 0)
+			if (weather[i].y < -100.0f)
 			{
-				weather[i].x = rand() % 30 - 15;
-				weather[i].y = rand() % 20 + 10;
-				weather[i].z = rand() % 30 - 15;
+				weather[i].x = rand() % 400 - 200;
+				weather[i].y = rand() % 200 + 100;
+				weather[i].z = rand() % 400 - 200;
 			}
 		}
 	}
@@ -295,6 +328,31 @@ void TimerFunction(int value)
 
 
 ////////////////////////////////////////////////////////
+
+void DrawTree()
+{
+	for (int i = 0; i < 10; ++i)
+	{
+		glPushMatrix();
+			glTranslatef(obj[i].x, obj[i].y + 35.0f, obj[i].z);
+			glPushMatrix();
+				glScalef(1.0f, 7.0f, 1.0f);
+				glColor3f(0.43f, 0.0f, 0.0f);
+				glutSolidCube(10.0);
+			glPopMatrix();
+			glPushMatrix();
+				glTranslatef(0.0f, 35.0f, 0.0f);
+				glColor3f(0.0f, 1.0f, 0.0f);
+				glutSolidSphere(15.0, 20, 20);
+			glPopMatrix();
+		glPopMatrix();
+	}
+}
+
+void DrawRobot()
+{
+}
+
 void DrawWeather()
 {
 	if (WeatherType == 2)
@@ -304,7 +362,7 @@ void DrawWeather()
 			glPushMatrix();
 				glTranslatef(weather[i].x, weather[i].y, weather[i].z);
 				glColor3f(1.0f, 1.0f, 1.0f);
-				glutSolidSphere(0.1, 10, 10);
+				glutSolidSphere(0.3, 10, 10);
 			glPopMatrix();
 		}
 	}
@@ -314,7 +372,7 @@ void DrawWeather()
 		{
 			glPushMatrix();
 				glTranslatef(weather[i].x, weather[i].y, weather[i].z);
-				glScalef(0.01f, 1.0f, 0.01f);
+				glScalef(0.1f, 5.0f, 0.1f);
 				glColor3f(1.0f, 1.0f, 1.0f);
 				glutSolidCube(1.0);
 			glPopMatrix();
