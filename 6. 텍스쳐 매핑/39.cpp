@@ -1,4 +1,4 @@
-#include <GL/freeglut.h>
+ï»¿#include <GL/freeglut.h>
 #include <iostream>
 using namespace std;
 
@@ -36,8 +36,8 @@ GLubyte * LoadDIBitmap(const char*, BITMAPINFO**);
 void LoadTexture();
 
 GLuint texture[6];
-GLubyte *pBytes; // µ¥ÀÌÅÍ¸¦ °¡¸®Å³ Æ÷ÀÎÅÍ
-BITMAPINFO *info; // ºñÆ®¸Ê Çì´õ ÀúÀåÇÒ º¯¼ö
+GLubyte *pBytes; // ë°ì´í„°ë¥¼ ê°€ë¦¬í‚¬ í¬ì¸í„°
+BITMAPINFO *info; // ë¹„íŠ¸ë§µ í—¤ë” ì €ì¥í•  ë³€ìˆ˜
 
 float x;
 
@@ -49,16 +49,16 @@ GLfloat fogEnd;
 
 void main(int argc, char *argv[])
 {
-	//ÃÊ±âÈ­ ÇÔ¼öµé
+	//ì´ˆê¸°í™” í•¨ìˆ˜ë“¤
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH); // µğ½ºÇÃ·¹ÀÌ ¸ğµå ¼³Á¤
-	glutInitWindowPosition(100, 100); // À©µµ¿ìÀÇ À§Ä¡ÁöÁ¤
-	glutInitWindowSize(800, 600); // À©µµ¿ìÀÇ Å©±â ÁöÁ¤
-	glutCreateWindow("½Ç½À 39"); // À©µµ¿ì »ı¼º (À©µµ¿ì ÀÌ¸§)
-	SetupRC(); // »óÅÂ º¯¼ö ÃÊ±âÈ­ ÇÔ¼ö
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH); // ë””ìŠ¤í”Œë ˆì´ ëª¨ë“œ ì„¤ì •
+	glutInitWindowPosition(100, 100); // ìœˆë„ìš°ì˜ ìœ„ì¹˜ì§€ì •
+	glutInitWindowSize(800, 600); // ìœˆë„ìš°ì˜ í¬ê¸° ì§€ì •
+	glutCreateWindow("ì‹¤ìŠµ 39"); // ìœˆë„ìš° ìƒì„± (ìœˆë„ìš° ì´ë¦„)
+	SetupRC(); // ìƒíƒœ ë³€ìˆ˜ ì´ˆê¸°í™” í•¨ìˆ˜
 	LoadTexture();
-	glutDisplayFunc(drawScene); // Ãâ·Â ÇÔ¼öÀÇ ÁöÁ¤
-	glutReshapeFunc(Reshape); // ´Ù½Ã ±×¸®±â ÇÔ¼öÀÇ ÁöÁ¤
+	glutDisplayFunc(drawScene); // ì¶œë ¥ í•¨ìˆ˜ì˜ ì§€ì •
+	glutReshapeFunc(Reshape); // ë‹¤ì‹œ ê·¸ë¦¬ê¸° í•¨ìˆ˜ì˜ ì§€ì •
 	glutKeyboardFunc(Keyboard);
 	glutTimerFunc(100, TimerFunction, 1);
 	glutMainLoop();
@@ -73,7 +73,7 @@ void SetupRC()
 	x = 0.0f;
 
 	fogMode = 1;
-	fogDensity = 0.5f;
+	fogDensity = 0.001f;
 	fogStart = -100.0f;
 	fogEnd = 100.0f;
 }
@@ -82,7 +82,7 @@ GLvoid drawScene(GLvoid)
 {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // À©µµ¿ì, ±íÀÌ ¹öÆÛ Å¬¸®¾î ÇÏ±â
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // ìœˆë„ìš°, ê¹Šì´ ë²„í¼ í´ë¦¬ì–´ í•˜ê¸°
 
 	glLoadIdentity();
 
@@ -91,13 +91,13 @@ GLvoid drawScene(GLvoid)
 	glRotatef(10.0f, 1.0f, 0.0f, 0.0f);
 	glRotatef(yRot, 0.0f, 1.0f, 0.0f);
 
-	// Àü¿ª ÁÖº¯±¤
+	// ì „ì—­ ì£¼ë³€ê´‘
 	glEnable(GL_LIGHTING);
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, AmbientLight);
 	glLightModelf(GL_LIGHT_MODEL_LOCAL_VIEWER, 1.0);
 	glLightModelf(GL_LIGHT_MODEL_TWO_SIDE, 0.0);
 
-	// 1¹ø Á¶¸í
+	// 1ë²ˆ ì¡°ëª…
 	glPushMatrix();
 	glTranslatef(lightPos1[0], lightPos1[1], lightPos1[2]);
 	glutSolidSphere(1.0, 10, 10);
@@ -105,10 +105,10 @@ GLvoid drawScene(GLvoid)
 
 	if (nflight1)
 	{
-		// Á¶¸íÀ» »ç¿ëÇÏµµ·Ï ¼³Á¤ 
+		// ì¡°ëª…ì„ ì‚¬ìš©í•˜ë„ë¡ ì„¤ì • 
 		glEnable(GL_LIGHTING);
 
-		// Á¶¸í ¼³Á¤
+		// ì¡°ëª… ì„¤ì •
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, DiffuseLight1);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, SpecularLight1);
 		glLightfv(GL_LIGHT0, GL_POSITION, lightPos1);
@@ -122,7 +122,7 @@ GLvoid drawScene(GLvoid)
 	else
 		glDisable(GL_LIGHT0);
 
-	// 2¹ø Á¶¸í
+	// 2ë²ˆ ì¡°ëª…
 	glPushMatrix();
 	glTranslatef(lightPos2[0], lightPos2[1], lightPos2[2]);
 	glutSolidSphere(1.0, 10, 10);
@@ -130,10 +130,10 @@ GLvoid drawScene(GLvoid)
 
 	if (nflight2)
 	{
-		// Á¶¸íÀ» »ç¿ëÇÏµµ·Ï ¼³Á¤ 
+		// ì¡°ëª…ì„ ì‚¬ìš©í•˜ë„ë¡ ì„¤ì • 
 		glEnable(GL_LIGHTING);
 
-		// Á¶¸í ¼³Á¤
+		// ì¡°ëª… ì„¤ì •
 		glLightfv(GL_LIGHT1, GL_DIFFUSE, DiffuseLight2);
 		glLightfv(GL_LIGHT1, GL_SPECULAR, SpecularLight2);
 		glLightfv(GL_LIGHT1, GL_POSITION, lightPos2);
@@ -150,25 +150,25 @@ GLvoid drawScene(GLvoid)
 	if (!nflight1 && !nflight2)
 		glDisable(GL_TEXTURE_2D);
 
-	// ¹Ù´Ú
+	// ë°”ë‹¥
 	DrawBackground();
 	DrawPlain();
 
-	// ÇÇ¶ó¹Ìµå
+	// í”¼ë¼ë¯¸ë“œ
 	DrawPyramid(0, 15, 0);
 	DrawPyramid(-12, 6, -12);
 	DrawPyramid(12, 6, -12);
 	DrawPyramid(-12, 6, 12);
 	DrawPyramid(12, 6, 12);
 
-	// ´Ş
+	// ë‹¬
 	DrawMoon();
 
-	// ±âµÕ
+	// ê¸°ë‘¥
 	DrawPillar();
 	glPopMatrix();
 
-	// ¾È°³
+	// ì•ˆê°œ
 	glEnable(GL_FOG);
 
 	if (fogMode == 1) glFogf(GL_FOG_MODE, GL_LINEAR);
@@ -179,7 +179,7 @@ GLvoid drawScene(GLvoid)
 	glFogf(GL_FOG_START, fogStart);
 	glFogf(GL_FOG_END, fogEnd);
 
-	glutSwapBuffers(); // °á°ú Ãâ·Â
+	glutSwapBuffers(); // ê²°ê³¼ ì¶œë ¥
 }
 
 void Reshape(int w, int h)
@@ -189,11 +189,11 @@ void Reshape(int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	// ¿ø±Ù Åõ¿µ
+	// ì›ê·¼ íˆ¬ì˜
 	gluPerspective(60.0f, w / h, 1.0, 1000.0);
 	glTranslatef(0.0, 0.0, -30.0);
 
-	// Á÷°¢ Åõ¿µ
+	// ì§ê° íˆ¬ì˜
 	//glOrtho(0.0, 800.0, 0.0, 600.0, -1.0, -1.0);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -296,15 +296,15 @@ void Keyboard(unsigned char key, int x, int y)
 		else isNormal = false;
 		break;
 
-	case 'f':									// Æ÷±× density °ª Á¶Àı
-		fogDensity += 0.1f;
+	case 'f':									// í¬ê·¸ density ê°’ ì¡°ì ˆ
+		fogDensity += 0.0001f;
 		break;
 
 	case 'F':
-		fogDensity -= 0.1f;
+		fogDensity -= 0.0001f;
 		break;
 
-	case 'g':									// Æ÷±× ½ÃÀÛ À§Ä¡ Á¶Àı
+	case 'g':									// í¬ê·¸ ì‹œì‘ ìœ„ì¹˜ ì¡°ì ˆ
 		fogStart += 1.0f;
 		break;
 
@@ -312,7 +312,7 @@ void Keyboard(unsigned char key, int x, int y)
 		fogStart -= 1.0f;
 		break;
 
-	case 'h':									// Æ÷±× ³¡ À§Ä¡ Á¶Àı
+	case 'h':									// í¬ê·¸ ë ìœ„ì¹˜ ì¡°ì ˆ
 		fogEnd += 1.0f;
 		break;
 
@@ -320,7 +320,7 @@ void Keyboard(unsigned char key, int x, int y)
 		fogEnd -= 1.0f;
 		break;
 
-	case 'm': case 'M':							// Æ÷±× ¸ğµå º¯°æ
+	case 'm': case 'M':							// í¬ê·¸ ëª¨ë“œ ë³€ê²½
 		if (fogMode == 1) fogMode = 2;
 		else if (fogMode == 2) fogMode = 3;
 		else if (fogMode == 3) fogMode = 1;
@@ -357,7 +357,7 @@ void DrawPlain()
 {
 	glPushMatrix();
 	glBindTexture(GL_TEXTURE_2D, texture[2]);
-	// ¹Ù´Ú
+	// ë°”ë‹¥
 	glBegin(GL_POLYGON);
 	glTexCoord2f(0.0f, 1.0f);
 	glVertex3f(-15.0f, 0, -15.0f);
@@ -380,7 +380,7 @@ void DrawPyramid(float x, float y, float z)
 	}
 
 	glPushMatrix();
-	// ¹Ù´Ú
+	// ë°”ë‹¥
 	glBegin(GL_POLYGON);
 	glVertex3f(x - 3, 0, z - 3);
 	glVertex3f(x + 3, 0, z - 3);
@@ -388,7 +388,7 @@ void DrawPyramid(float x, float y, float z)
 	glVertex3f(x - 3, 0, z + 3);
 	glEnd();
 
-	// ¿·
+	// ì˜†
 	glBindTexture(GL_TEXTURE_2D, texture[1]);
 	glBegin(GL_POLYGON);
 	if (!isNormal) glNormal3f(18, 0, 0);
@@ -438,18 +438,18 @@ void DrawPyramid(float x, float y, float z)
 void DrawMoon()
 {
 	glPushMatrix();
-	// ÀÚµ¿ ¸ÅÇÎ ¼³Á¤ 
+	// ìë™ ë§¤í•‘ ì„¤ì • 
 	glEnable(GL_TEXTURE_GEN_S);
 	glEnable(GL_TEXTURE_GEN_T);
 
-	// ±¸ ¸ÅÇÎ
+	// êµ¬ ë§¤í•‘
 	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 	glBindTexture(GL_TEXTURE_2D, texture[3]);
 	glTranslatef(5.0f * cos(degree * RADIAN), 15, 5.0f * sin(degree * RADIAN));
 	glutSolidSphere(2.0, 10, 10);
 
-	// ÀÚµ¿ ¸ÅÇÎ ÇØÁ¦
+	// ìë™ ë§¤í•‘ í•´ì œ
 	glDisable(GL_TEXTURE_GEN_S);
 	glDisable(GL_TEXTURE_GEN_T);
 	glPopMatrix();
@@ -457,7 +457,7 @@ void DrawMoon()
 
 void DrawBackground()
 {
-	// ÅØ½ºÃ³¸¦ °´Ã¼¿¡ ¸ÊÇÎ
+	// í…ìŠ¤ì²˜ë¥¼ ê°ì²´ì— ë§µí•‘
 	glBindTexture(GL_TEXTURE_2D, texture[4]);
 	glBegin(GL_QUADS);
 	glTexCoord2f(0.0f, 0.0f);
@@ -612,28 +612,28 @@ GLubyte * LoadDIBitmap(const char* filename, BITMAPINFO** info)
 	int bitsize, infosize;
 	BITMAPFILEHEADER header;
 
-	// ¹ÙÀÌ³Ê¸® ÀĞ±â ¸ğµå·Î ÆÄÀÏÀ» ¿¬´Ù 
+	// ë°”ì´ë„ˆë¦¬ ì½ê¸° ëª¨ë“œë¡œ íŒŒì¼ì„ ì—°ë‹¤ 
 	if ((fp = fopen(filename, "rb")) == NULL)
 		return NULL;
 
-	// ºñÆ®¸Ê ÆÄÀÏ Çì´õ¸¦ ÀĞ´Â´Ù. 
+	// ë¹„íŠ¸ë§µ íŒŒì¼ í—¤ë”ë¥¼ ì½ëŠ”ë‹¤. 
 	if (fread(&header, sizeof(BITMAPFILEHEADER), 1, fp) < 1)
 	{
 		fclose(fp);
 		return NULL;
 	}
 
-	// ÆÄÀÏÀÌ BMP ÆÄÀÏÀÎÁö È®ÀÎÇÑ´Ù.
+	// íŒŒì¼ì´ BMP íŒŒì¼ì¸ì§€ í™•ì¸í•œë‹¤.
 	if (header.bfType != 'MB')
 	{
 		fclose(fp);
 		return NULL;
 	}
 
-	// BITMAPINFOHEADER À§Ä¡·Î °£´Ù.
+	// BITMAPINFOHEADER ìœ„ì¹˜ë¡œ ê°„ë‹¤.
 	infosize = header.bfOffBits - sizeof(BITMAPFILEHEADER);
 
-	// ºñÆ®¸Ê ÀÌ¹ÌÁö µ¥ÀÌÅÍ¸¦ ³ÖÀ» ¸Ş¸ğ¸® ÇÒ´çÀ» ÇÑ´Ù.
+	// ë¹„íŠ¸ë§µ ì´ë¯¸ì§€ ë°ì´í„°ë¥¼ ë„£ì„ ë©”ëª¨ë¦¬ í• ë‹¹ì„ í•œë‹¤.
 	if ((*info = (BITMAPINFO *)malloc(infosize)) == NULL)
 	{
 		fclose(fp);
@@ -641,7 +641,7 @@ GLubyte * LoadDIBitmap(const char* filename, BITMAPINFO** info)
 		return NULL;
 	}
 
-	// ºñÆ®¸Ê ÀÎÆ÷ Çì´õ¸¦ ÀĞ´Â´Ù. 
+	// ë¹„íŠ¸ë§µ ì¸í¬ í—¤ë”ë¥¼ ì½ëŠ”ë‹¤. 
 	if (fread(*info, 1, infosize, fp) < (unsigned int)infosize)
 	{
 		free(*info);
@@ -649,11 +649,11 @@ GLubyte * LoadDIBitmap(const char* filename, BITMAPINFO** info)
 		return NULL;
 	}
 
-	// ºñÆ®¸ÊÀÇ Å©±â ¼³Á¤
+	// ë¹„íŠ¸ë§µì˜ í¬ê¸° ì„¤ì •
 	if ((bitsize = (*info)->bmiHeader.biSizeImage) == 0)
 		bitsize = ((*info)->bmiHeader.biWidth*(*info)->bmiHeader.biBitCount + 7) / 8.0 *  abs((*info)->bmiHeader.biHeight);
 
-	// ºñÆ®¸ÊÀÇ Å©±â¸¸Å­ ¸Ş¸ğ¸®¸¦ ÇÒ´çÇÑ´Ù.
+	// ë¹„íŠ¸ë§µì˜ í¬ê¸°ë§Œí¼ ë©”ëª¨ë¦¬ë¥¼ í• ë‹¹í•œë‹¤.
 	if ((bits = (unsigned char *)malloc(bitsize)) == NULL)
 	{
 		free(*info);
@@ -661,7 +661,7 @@ GLubyte * LoadDIBitmap(const char* filename, BITMAPINFO** info)
 		return NULL;
 	}
 
-	// ºñÆ®¸Ê µ¥ÀÌÅÍ¸¦ bit(GLubyte Å¸ÀÔ)¿¡ ÀúÀåÇÑ´Ù.
+	// ë¹„íŠ¸ë§µ ë°ì´í„°ë¥¼ bit(GLubyte íƒ€ì…)ì— ì €ì¥í•œë‹¤.
 	if (fread(bits, 1, bitsize, fp) < (unsigned int)bitsize)
 	{
 		free(*info);
@@ -728,7 +728,7 @@ void LoadTexture()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	// Ä³¸¯ÅÍ
+	// ìºë¦­í„°
 	glBindTexture(GL_TEXTURE_2D, texture[5]);
 	pBytes = LoadDIBitmap("rainicorn.bmp", &info);
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, 500, 260, 0, GL_BGR_EXT, GL_UNSIGNED_BYTE, pBytes);
