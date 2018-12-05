@@ -39,7 +39,7 @@ GLfloat Pos[] = { -100,100,0 };
 GLfloat Rect[] = { 150,150,0 };
 GLfloat Alpha[9][3];
 int g_selectedTag{ 4 };
-double g_TagAlpha;
+double g_TagAlpha[3];
 
 char *blendname[9];
 int len;
@@ -195,12 +195,28 @@ void Keyboard(unsigned char key, int x, int y)
 		if (Rect[1] != 50) { Rect[1] -= 100; g_selectedTag += 3; }
 		break;
 
-	case '-':
-		g_TagAlpha -= 0.1;
+	case 'i':
+		g_TagAlpha[0] -= 0.1;
 		break;
 
-	case '+':
-		g_TagAlpha += 0.1;
+	case 'o':
+		g_TagAlpha[0] += 0.1;
+		break;
+
+	case 'k':
+		g_TagAlpha[1] -= 0.1;
+		break;
+
+	case 'l':
+		g_TagAlpha[1] += 0.1;
+		break;
+
+	case 'n':
+		g_TagAlpha[2] -= 0.1;
+		break;
+
+	case 'm':
+		g_TagAlpha[2] += 0.1;
 		break;
 
 	case 'r': case 'R':
@@ -226,8 +242,10 @@ void DrawObjects(double x, double y, BlendFunc b1, BlendFunc b2, int tag)
 {
 	if (tag == g_selectedTag)
 	{
-		Alpha[tag][0] += g_TagAlpha;      Alpha[tag][1] += g_TagAlpha;      Alpha[tag][2] += g_TagAlpha;
-		g_TagAlpha = 0;
+		Alpha[tag][0] += g_TagAlpha[0];      Alpha[tag][1] += g_TagAlpha[1];      Alpha[tag][2] += g_TagAlpha[2];
+		g_TagAlpha[0] = 0;
+		g_TagAlpha[1] = 0;
+		g_TagAlpha[2] = 0;
 	}
 
 	glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
