@@ -195,10 +195,17 @@ GLvoid drawScene(GLvoid)
 		}
 		else
 			glDisable(GL_LIGHT2);
-		//DrawBigPyramid(0, 15, 0);
+
+		glEnable(GL_NORMALIZE);
+		glEnable(GL_AUTO_NORMAL);
+
+		glNormal3f(0, 18, 0);
 		DivideTriangle(triangle1[0], triangle1[1], triangle1[2], level);
+		glNormal3f(0, 18, 0);
 		DivideTriangle(triangle2[0], triangle2[1], triangle2[2], level);
+		glNormal3f(0, 18, 0);
 		DivideTriangle(triangle3[0], triangle3[1], triangle3[2], level);
+		glNormal3f(0, 18, 0);
 		DivideTriangle(triangle4[0], triangle4[1], triangle4[2], level);
 	glPopMatrix();
 
@@ -689,20 +696,20 @@ void DrawSnow()
 void DivideTriangle(float *a, float *b, float *c, int level)
 {
 	GLfloat v[3][3];
-	int j;
+
 	if (level > 0)
 	{
-		for (j = 0; j < 3; j++) 
+		for (int i = 0; i < 3; i++)
 		{
-			v[0][j] = (a[j] + b[j]) / 2;
+			v[0][i] = (a[i] + b[i]) / 2;
 		}
-		for (j = 0; j < 3; j++) 
+		for (int i = 0; i < 3; i++)
 		{
-			v[1][j] = (a[j] + c[j]) / 2;
+			v[1][i] = (a[i] + c[i]) / 2;
 		}
-		for (j = 0; j < 3; j++) 
+		for (int i = 0; i < 3; i++)
 		{
-			v[2][j] = (b[j] + c[j]) / 2;
+			v[2][i] = (b[i] + c[i]) / 2;
 		}
 
 		DivideTriangle(a, v[0], v[1], level - 1);
@@ -717,7 +724,7 @@ void DivideTriangle(float *a, float *b, float *c, int level)
 
 void DrawTriangle(float *a, float *b, float *c)
 {
-	glBegin(GL_TRIANGLES);
+	glBegin(GL_POLYGON);
 	glVertex3fv(a);
 	glVertex3fv(b);
 	glVertex3fv(c);
