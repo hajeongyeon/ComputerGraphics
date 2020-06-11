@@ -2,13 +2,13 @@
 2018-2 컴퓨터그래픽스 강의 실습을 정리한 Repository입니다.
 
 ### Warming Up
-[Warming UP](https://github.com/hajeongyeon/ComputerGraphics/tree/master/Warming%20Up)
+[Warming Up](https://github.com/hajeongyeon/ComputerGraphics/tree/master/Warming%20Up)
 - OpenGL이 아닌 C++을 이용한 Warming Up 과제
 
 ### 1. OpenGL 기초
 [1. OpenGL 기초](https://github.com/hajeongyeon/ComputerGraphics/tree/master/1.%20OpenGL%20%EA%B8%B0%EC%B4%88)
-(1) 색상 지정하고 사각형 그리기
-(2) 바둑판 모양 그리기
+1. 색상 지정하고 사각형 그리기
+2. 바둑판 모양 그리기
 (3) 임의의 도형 그리기
 (4) 사각형 변경 애니메이션 만들기
 (5) 사각형 튀기기
